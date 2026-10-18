@@ -1,0 +1,39 @@
+name: transfervio
+services:
+  postgres:
+    image: postgres:17.9-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5439}:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME:-transfervio}
+      POSTGRES_USER: ${DB_USER:-transfervio}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  minio:
+    image: transfervio-minio:RELEASE.2025-10-15T17-29-55Z
+    build:
+      context: ./minio
+    command: server /data --console-address :9001
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MINIO_PORT:-9004}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9005}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD}
+    volumes:
+      - ../../.local-data/objects:/data
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:9000/minio/health/live]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  postgres-data:

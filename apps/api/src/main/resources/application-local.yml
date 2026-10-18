@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5439}/${DB_NAME:transfervio}
+    username: ${DB_USER:transfervio}
+    password: ${DB_PASSWORD}
+server:
+  address: 127.0.0.1
+app:
+  runtime: local
+  web-url: http://localhost:${WEB_PORT:5174}
+  storage-endpoint: http://localhost:${MINIO_PORT:9004}
+  storage-bucket: ${STORAGE_BUCKET:transfervio-local}
+  storage-access-key: ${MINIO_ROOT_USER}
+  storage-secret-key: ${MINIO_ROOT_PASSWORD}
+  storage-region: us-east-1

@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: transfervio
+  profiles:
+    default: local
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: ${API_PORT:8091}
+  error:
+    include-message: never
+    include-stacktrace: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+app:
+  ai-provider: ${AI_PROVIDER:mock}
+  external-ai-enabled: ${EXTERNAL_AI_ENABLED:false}
+  destination-mode: ${DESTINATION_MODE:mock}
+  import-write-enabled: ${IMPORT_WRITE_ENABLED:false}
+  retention-days: ${UPLOAD_RETENTION_DAYS:7}
+  bootstrap-password: ${BOOTSTRAP_ADMIN_PASSWORD:}

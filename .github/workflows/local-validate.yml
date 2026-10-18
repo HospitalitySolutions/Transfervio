@@ -1,0 +1,29 @@
+name: Local validation
+# A public repository must not execute untrusted PR code on the developer's PC.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: transfervio-local-validation
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: [self-hosted, Windows, X64, transfervio-local]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Validate source and build (local runner only)
+        shell: pwsh
+        run: |
+          ./scripts/check-source.ps1
+          $env:JAVA_HOME = 'C:\Program Files\Java\jdk-21.0.10'
+          mvn.cmd -B -f apps/api/pom.xml verify
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Push-Location apps/web
+          npm.cmd ci --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm.cmd run build
+          exit $LASTEXITCODE
