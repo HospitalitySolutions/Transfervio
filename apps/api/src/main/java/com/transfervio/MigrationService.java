@@ -14,6 +14,9 @@ public class MigrationService {
   final ImageExtractor images;
   final RecordValidator validator;
   final UploadService uploads;
+  final SourceMappings sourceMappings;
+  final AiConsent aiConsent;
+  final RuntimeConfig config;
 
   MigrationService(
       Store store,
@@ -22,7 +25,10 @@ public class MigrationService {
       StructuredParser parser,
       ImageExtractor images,
       RecordValidator validator,
-      UploadService uploads) {
+      UploadService uploads,
+      SourceMappings sourceMappings,
+      AiConsent aiConsent,
+      RuntimeConfig config) {
     this.store = store;
     this.scope = scope;
     this.objects = objects;
@@ -30,6 +36,9 @@ public class MigrationService {
     this.images = images;
     this.validator = validator;
     this.uploads = uploads;
+    this.sourceMappings = sourceMappings;
+    this.aiConsent = aiConsent;
+    this.config = config;
   }
 
   @Transactional
@@ -37,6 +46,13 @@ public class MigrationService {
     var m = scope.invitation(token, true);
     scope.editable(m);
     UUID id = Store.id(m.get("id"));
+    sourceMappings.requireReady(id);
+    if (config.externalAi)
+      for (var file :
+          store.rows(
+              "select id,sha256 from uploads where migration_id=? and deleted_at is null and"
+                  + " content_type like 'image/%'",
+              id)) aiConsent.require(id, Store.id(file.get("id")), Store.text(file.get("sha256")));
     if (store.db.queryForObject(
             "select count(*) from uploads where migration_id=? and deleted_at is null",
             Integer.class,
@@ -73,7 +89,9 @@ public class MigrationService {
       byte[] bytes = objects.get(Store.text(file.get("object_key")));
       String type = Store.text(file.get("content_type"));
       var parsed =
-          type.startsWith("image/") ? images.extract(bytes, migration) : parser.parse(bytes, type);
+          type.startsWith("image/")
+              ? images.extract(bytes, migration, Store.id(file.get("id")))
+              : sourceMappings.apply(file, bytes);
       for (var row : parsed) {
         if (++total > 10000) throw Store.error(400, "Maximum 10,000 records per migration");
         var data = new LinkedHashMap<>(row.data());
@@ -103,6 +121,11 @@ public class MigrationService {
         provenance.put("filename", file.get("original_name"));
         provenance.put("sha256", file.get("sha256"));
         provenance.put("row", row.row());
+        provenance.put("table", row.table());
+        if (type.startsWith("image/"))
+          for (String field : List.of("source_region", "uncertain_fields"))
+            if (row.sourceFields().containsKey(field))
+              provenance.put(field, row.sourceFields().get(field));
         provenance.put("source_id", sourceIdentity);
         provenance.put(
             "extractor", type.startsWith("image/") ? images.providerName() : "deterministic");
@@ -305,6 +328,13 @@ public class MigrationService {
     result.put("migration", m);
     result.put("files", uploads.list(id));
     result.put(
+        "ai_usage",
+        store.rows(
+            "select model,purpose,count(*) responses,sum(input_tokens)"
+                + " input_tokens,sum(output_tokens) output_tokens,sum(estimated_cost_usd)"
+                + " estimated_cost_usd from ai_usage where migration_id=? group by model,purpose",
+            id));
+    result.put(
         "records",
         store.rows(
             "select id,entity,data,provenance,issues,excluded from records where migration_id=?"
@@ -315,7 +345,9 @@ public class MigrationService {
         store.rows("select * from delivery_results where migration_id=? order by updated_at", id));
     result.put(
         "jobs",
-        store.rows("select kind,status,attempts,error_code from jobs where migration_id=?", id));
+        store.rows(
+            "select kind,status,attempts,error_code,error_message from jobs where migration_id=?",
+            id));
     return result;
   }
 
@@ -365,6 +397,13 @@ public class MigrationService {
 
   @Transactional
   public Map<String, Object> approve(String token, int revision) {
+    return approve(token, revision, null);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Transactional
+  public Map<String, Object> approve(
+      String token, int revision, Map<String, List<String>> requestedFields) {
     var m = scope.invitation(token, true);
     UUID id = Store.id(m.get("id"));
     if (Set.of("READY", "PARTIAL", "IMPORTED").contains(m.get("status")))
@@ -372,6 +411,16 @@ public class MigrationService {
     if (!m.get("status").equals("REVIEW") || ((Number) m.get("revision")).intValue() != revision)
       throw Store.error(409, "Review changed; refresh and review before approving");
     revalidate(m);
+    var invitationFields = (Map<String, List<String>>) m.get("export_fields");
+    var sharing = ExportSchema.policy(requestedFields == null ? invitationFields : requestedFields);
+    var approvedFields = new LinkedHashMap<String, List<String>>();
+    for (String entity : ExportSchema.ENTITIES.keySet()) {
+      var permitted = ExportSchema.allowed(entity, invitationFields);
+      if (sharing.containsKey(entity) && !permitted.containsAll(sharing.get(entity)))
+        throw Store.error(403, "Approval cannot expand invitation sharing scope");
+      approvedFields.put(
+          entity, new ArrayList<>(ExportSchema.allowed(entity, invitationFields, sharing)));
+    }
     var records =
         store.rows(
             "select id,entity,data,provenance from records where migration_id=? and not excluded"
@@ -402,6 +451,7 @@ public class MigrationService {
     }
     var content = new LinkedHashMap<String, Object>();
     content.put("schema_version", 1);
+    content.put("export_fields", approvedFields);
     for (String field : List.of("partner_id", "tenant_id", "property_id"))
       content.put(field, m.get(field));
     content.put("migration_id", id);

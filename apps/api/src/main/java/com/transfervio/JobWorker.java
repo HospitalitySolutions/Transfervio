@@ -18,7 +18,7 @@ public class JobWorker {
   public void work() {
     var jobs =
         store.rows(
-            "update jobs set status='RUNNING',attempts=attempts+1,lease_until=now()+interval '2"
+            "update jobs set status='RUNNING',attempts=attempts+1,lease_until=now()+interval '30"
                 + " minutes' where id=(select id from jobs where kind='EXTRACT' and"
                 + " ((status='PENDING' and available_at<=now()) or (status='RUNNING' and"
                 + " lease_until<now())) and attempts<3 order by created_at for update skip locked"
@@ -28,15 +28,25 @@ public class JobWorker {
     try {
       migrations.extract(Store.id(job.get("migration_id")));
       store.db.update(
-          "update jobs set status='DONE',lease_until=null,error_code=null where id=?",
+          "update jobs set status='DONE',lease_until=null,error_code=null,error_message=null where"
+              + " id=?",
           job.get("id"));
     } catch (Exception e) {
-      boolean terminal = ((Number) job.get("attempts")).intValue() >= 3;
+      boolean terminal =
+          ((Number) job.get("attempts")).intValue() >= 3
+              || (e instanceof AiFailure ai && !ai.retryable);
+      String code = e instanceof AiFailure ai ? ai.code : "EXTRACTION_FAILED";
+      String message =
+          e instanceof AiFailure ai
+              ? ai.getReason()
+              : "Extraction failed; check the source file and review its mapping";
       store.db.update(
           "update jobs set"
-              + " status=?,lease_until=null,error_code='EXTRACTION_FAILED',available_at=now()+interval"
-              + " '3 seconds' where id=?",
+              + " status=?,lease_until=null,error_code=?,error_message=?,available_at=now()+interval"
+              + " '30 seconds' where id=?",
           terminal ? "FAILED" : "PENDING",
+          code,
+          message,
           job.get("id"));
       if (terminal)
         store.db.update(

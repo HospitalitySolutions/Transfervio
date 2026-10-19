@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent, type CSSProperties } from "react";
+import { SourceMappingPanel } from "./SourceMappingPanel";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -647,7 +648,7 @@ function Dashboard({
             <span>transfervio · A smoother way forward.</span>
             <span>
               <Database size={13} />
-              Stored locally · AI: mock
+              Stored locally · Review required
             </span>
           </footer>
         </div>
@@ -1438,7 +1439,8 @@ function Portal({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(""),
     [confirmed, setConfirmed] = useState(false),
-    [editing, setEditing] = useState<Row>();
+    [editing, setEditing] = useState<Row>(),
+    [sharing, setSharing] = useState<Record<string, string[]> | undefined>();
   const base = `/public/invitations/${invitation}`;
   async function load() {
     const [l, p] = await Promise.all([
@@ -1514,8 +1516,13 @@ function Portal({
         {landing.external_ai_enabled && (
           <div className="external-notice">
             <AlertCircle size={18} />
-            External OpenAI processing is enabled for recognized synthetic
-            fixtures. These images leave this computer for processing.
+            OpenAI is available
+            {landing.ai_synthetic_only
+              ? " for verified synthetic fixtures"
+              : " for authorized uploads"}
+            . Each file needs your explicit permission. Images or bounded column
+            samples leave this computer only when you request AI extraction or
+            suggestions.
           </div>
         )}
         <div className="portal-intro">
@@ -1631,6 +1638,17 @@ function Portal({
                 </div>
               ))}
             </div>
+            {editable && preview.files.length > 0 && (
+              <SourceMappingPanel
+                base={base}
+                files={preview.files}
+                schema={landing.export_schema}
+                externalAi={landing.external_ai_enabled}
+                syntheticOnly={landing.ai_synthetic_only}
+                changed={load}
+                notify={notify}
+              />
+            )}
             {status === "PROCESSING" ? (
               <div className="processing">
                 <LoaderCircle className="spin" />
@@ -1671,8 +1689,9 @@ function Portal({
             )}
             {status === "FAILED" && (
               <p className="error-text">
-                Extraction could not finish. Check file formats and try again,
-                or ask your partner for help.
+                {preview.jobs.find((j: Row) => j.error_message)
+                  ?.error_message ||
+                  "Extraction could not finish. Check source mappings and file formats."}
               </p>
             )}
           </section>
@@ -1707,6 +1726,69 @@ function Portal({
             {status === "REVIEW" && (
               <div className="approve-section">
                 <div>
+                  <details className="sharing-fields">
+                    <summary>Choose fields your partner may retrieve</summary>
+                    <p>
+                      Technical record IDs and client relationships always
+                      remain available. Unselected business fields will not be
+                      exported.
+                    </p>
+                    {Object.entries(
+                      landing.export_schema as Record<string, Row[]>,
+                    ).map(([entity, fields]) => (
+                      <fieldset key={entity}>
+                        <legend>{entity}</legend>
+                        {fields
+                          .filter(
+                            (f) =>
+                              !landing.migration.export_fields?.[entity] ||
+                              landing.migration.export_fields[entity].includes(
+                                f.id,
+                              ),
+                          )
+                          .map((f) => {
+                            const current =
+                              sharing?.[entity] ||
+                              landing.migration.export_fields?.[entity] ||
+                              fields.map((x) => x.id);
+                            return (
+                              <label className="checkbox" key={f.id}>
+                                <input
+                                  type="checkbox"
+                                  checked={current.includes(f.id)}
+                                  onChange={(e) => {
+                                    const defaults = Object.fromEntries(
+                                      Object.entries(
+                                        landing.export_schema as Record<
+                                          string,
+                                          Row[]
+                                        >,
+                                      ).map(([key, values]) => [
+                                        key,
+                                        landing.migration.export_fields?.[
+                                          key
+                                        ] || values.map((x) => x.id),
+                                      ]),
+                                    );
+                                    setSharing({
+                                      ...defaults,
+                                      ...sharing,
+                                      [entity]: e.target.checked
+                                        ? [...current, f.id]
+                                        : current.filter(
+                                            (x: string) => x !== f.id,
+                                          ),
+                                    });
+                                    setConfirmed(false);
+                                  }}
+                                />
+                                {f.display_name}
+                              </label>
+                            );
+                          })}
+                      </fieldset>
+                    ))}
+                  </details>
                   <label className="checkbox">
                     <input
                       type="checkbox"
@@ -1733,6 +1815,7 @@ function Portal({
                         method: "POST",
                         body: JSON.stringify({
                           revision: preview.migration.revision,
+                          ...(sharing ? { export_fields: sharing } : {}),
                         }),
                       });
                       await load();
@@ -1757,7 +1840,7 @@ function Portal({
             <ShieldCheck size={14} />
             Stored on this computer ·{" "}
             {landing.external_ai_enabled
-              ? "External synthetic AI"
+              ? "AI requires per-file consent"
               : "Mock extraction"}
           </span>
         </footer>

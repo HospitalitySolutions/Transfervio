@@ -37,7 +37,8 @@ public class PartnerController {
       @NotNull UUID tenant_id,
       UUID property_id,
       @NotEmpty List<String> allowed_entities,
-      @Min(1) @Max(720) int expires_in_hours) {}
+      @Min(1) @Max(720) int expires_in_hours,
+      Map<String, List<String>> export_fields) {}
 
   record Branding(
       @NotBlank @Size(max = 160) String brand_name,
@@ -45,7 +46,7 @@ public class PartnerController {
       @NotBlank @Size(max = 500) String support_text,
       @Size(max = 180000) String logo_data) {}
 
-  record Key(@NotBlank @Size(max = 100) String label) {}
+  record Key(@NotBlank @Size(max = 100) String label, Map<String, List<String>> export_fields) {}
 
   record Catalog(
       @NotNull UUID property_id, @NotEmpty @Size(max = 1000) List<@Valid CatalogItem> entries) {}
@@ -94,8 +95,8 @@ public class PartnerController {
   List<Map<String, Object>> keys(@AuthenticationPrincipal AuthService.Identity who) {
     who.admin();
     return store.rows(
-        "select id,label,created_at,expires_at,revoked from credentials where partner_id=? and"
-            + " kind='API_KEY' order by created_at desc",
+        "select id,label,created_at,expires_at,revoked,export_fields from credentials where"
+            + " partner_id=? and kind='API_KEY' order by created_at desc",
         who.partnerId());
   }
 
@@ -103,7 +104,7 @@ public class PartnerController {
   Map<String, Object> key(
       @AuthenticationPrincipal AuthService.Identity who, @Valid @RequestBody Key req) {
     who.admin();
-    return auth.issue(who.partnerId(), req.label(), "API_KEY");
+    return auth.issue(who.partnerId(), req.label(), "API_KEY", req.export_fields());
   }
 
   @PostMapping("/v1/api-keys/{id}/revoke")
@@ -236,6 +237,8 @@ public class PartnerController {
   @Transactional
   Map<String, Object> invite(
       @AuthenticationPrincipal AuthService.Identity who, @Valid @RequestBody Invitation req) {
+    who.fullRecords();
+    var sharing = ExportSchema.policy(req.export_fields());
     scope.tenant(who.partnerId(), req.tenant_id());
     if (req.property_id() != null)
       scope.property(who.partnerId(), req.tenant_id(), req.property_id());
@@ -245,11 +248,13 @@ public class PartnerController {
     String token = Store.token();
     Instant expiry = Instant.now().plusSeconds(req.expires_in_hours() * 3600L);
     store.db.update(
-        "insert into migrations(id,partner_id,tenant_id,property_id) values (?,?,?,?)",
+        "insert into migrations(id,partner_id,tenant_id,property_id,export_fields) values"
+            + " (?,?,?,?,?::jsonb)",
         migration,
         who.partnerId(),
         req.tenant_id(),
-        req.property_id());
+        req.property_id(),
+        store.json(sharing));
     store.db.update(
         "insert into invitations(id,migration_id,token_hash,allowed_entities,expires_at) values"
             + " (?,?,?,?::text[],?)",
@@ -318,6 +323,8 @@ public class PartnerController {
         scope.tenant(Store.id(m.get("partner_id")), Store.id(m.get("tenant_id"))).get("name"));
     out.put("ai_provider", config.aiProvider);
     out.put("external_ai_enabled", config.externalAi);
+    out.put("ai_synthetic_only", config.syntheticOnly);
+    out.put("export_schema", ExportSchema.ENTITIES);
     out.put(
         "property",
         m.get("property_id") == null

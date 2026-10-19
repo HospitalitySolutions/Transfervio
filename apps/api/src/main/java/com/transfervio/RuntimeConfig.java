@@ -65,11 +65,13 @@ public class RuntimeConfig {
         || (aiProvider.equals("mock") && externalAi))
       throw new IllegalStateException("Invalid AI provider/opt-in combination");
     if (aiProvider.equals("openai")
-        && (!externalAi || !syntheticOnly || openaiKey.isBlank() || openaiModel.isBlank()))
+        && (!externalAi || openaiKey.isBlank() || openaiModel.isBlank()))
       throw new IllegalStateException(
-          "OpenAI requires external opt-in, synthetic-only mode, a key, and an explicit model");
-    if (!destination.equals("mock") && !destination.equals("calendra"))
-      throw new IllegalStateException("Unknown destination");
+          "OpenAI requires external opt-in, a key, and an explicit model; uploads require separate"
+              + " consent");
+    if (!destination.equals("mock"))
+      throw new IllegalStateException(
+          "Transfervio supports only its local mock; vendor imports run outside the core");
     if (writeEnabled)
       throw new IllegalStateException(
           "Remote destination writes require a separately reviewed integration");

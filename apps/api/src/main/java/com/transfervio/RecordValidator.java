@@ -83,6 +83,21 @@ public class RecordValidator {
       OffsetDateTime start = parseStart(Store.text(data.get("start")), zone, issues);
       if (start != null) data.put("start", start.toString());
       String duration = Store.text(data.get("duration_minutes"));
+      if (start != null && !Store.text(data.get("end")).isBlank()) {
+        var normalizedEnd = parseStart(Store.text(data.get("end")), zone, issues);
+        if (normalizedEnd != null) {
+          data.put("end", normalizedEnd.toString());
+          if (!duration.isBlank())
+            try {
+              if (Duration.between(start, normalizedEnd).getSeconds()
+                  != Long.parseLong(duration) * 60L)
+                issues.add(
+                    issue(
+                        "END_DURATION_MISMATCH", "end", "End must agree with start and duration"));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+      }
       if (duration.isBlank() && start != null && !Store.text(data.get("end")).isBlank()) {
         var end = parseStart(Store.text(data.get("end")), zone, issues);
         if (end != null) {
@@ -124,16 +139,18 @@ public class RecordValidator {
           }
         }
         final String candidate = id;
-        if (catalog.stream()
-            .noneMatch(
-                c ->
-                    kind.equals(c.get("kind"))
-                        && candidate.equals(Store.text(c.get("external_id")))))
+        if (!candidate.isBlank()
+            && catalog.stream()
+                .noneMatch(
+                    c ->
+                        kind.equals(c.get("kind"))
+                            && candidate.equals(Store.text(c.get("external_id")))))
           issues.add(
               issue(
                   "UNRESOLVED_" + kind,
                   field,
-                  "Select a " + kind.toLowerCase(Locale.ROOT) + " from this property's catalog"));
+                  "Reference is not in this property's catalog; clear it for vendor-side"
+                      + " resolution"));
       }
     }
     return issues;

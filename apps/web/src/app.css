@@ -1915,3 +1915,104 @@ tbody tr:last-child td {
     font-size: 9px;
   }
 }
+/* Source mapping stays readable for unknown vendor exports and on mobile. */
+.source-mappings {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid #dce4dd;
+  border-radius: 14px;
+  background: #fbfcfa;
+}
+.source-mappings summary,
+.sharing-fields summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.source-plan {
+  padding: 20px 0;
+  border-top: 1px solid #dce4dd;
+  margin-top: 18px;
+}
+.source-plan > label {
+  max-width: 300px;
+  display: grid;
+  gap: 6px;
+}
+.source-map-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 1fr);
+  gap: 16px;
+  padding: 10px 0;
+  align-items: center;
+}
+.source-map-row strong,
+.source-map-row small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.source-map-row small {
+  color: #65756a;
+  margin-top: 4px;
+}
+.source-map-row select,
+.source-plan select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dce4dd;
+  border-radius: 8px;
+  background: white;
+}
+.source-mappings p {
+  color: #65756a;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.source-mappings .button-row {
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.ai-consent {
+  margin-bottom: 20px;
+}
+.ai-consent .checkbox {
+  margin: 12px 0;
+}
+.sharing-fields {
+  margin-bottom: 20px;
+}
+.sharing-fields fieldset {
+  border: 1px solid #dce4dd;
+  border-radius: 8px;
+  margin: 14px 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+}
+.sharing-fields legend {
+  font-weight: 650;
+  text-transform: capitalize;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 600px) {
+  .source-mappings {
+    padding: 12px;
+  }
+  .source-map-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .sharing-fields fieldset {
+    grid-template-columns: 1fr;
+  }
+}

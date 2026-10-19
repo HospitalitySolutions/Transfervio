@@ -13,7 +13,13 @@ public class AuthService {
   final RuntimeConfig config;
   final BCryptPasswordEncoder passwords = new BCryptPasswordEncoder(12);
 
-  public record Identity(UUID partnerId, UUID credentialId, String kind) {
+  public record Identity(
+      UUID partnerId, UUID credentialId, String kind, Map<String, List<String>> exportFields) {
+    void fullRecords() {
+      if (!exportFields.isEmpty())
+        throw Store.error(403, "Use scoped exports with this field-restricted credential");
+    }
+
     void admin() {
       if (!kind.equals("SESSION")) throw Store.error(403, "Partner administrator session required");
     }
@@ -53,14 +59,17 @@ public class AuthService {
   Identity authenticate(String raw) {
     var rows =
         store.rows(
-            "select c.id,c.partner_id,c.kind from credentials c join partners p on"
+            "select c.id,c.partner_id,c.kind,c.export_fields from credentials c join partners p on"
                 + " p.id=c.partner_id where c.token_hash=? and not c.revoked and p.active and"
                 + " (c.expires_at is null or c.expires_at>now())",
             Store.hash(raw));
     if (rows.isEmpty()) throw Store.error(401, "Invalid or expired credentials");
     var row = rows.getFirst();
     return new Identity(
-        Store.id(row.get("partner_id")), Store.id(row.get("id")), Store.text(row.get("kind")));
+        Store.id(row.get("partner_id")),
+        Store.id(row.get("id")),
+        Store.text(row.get("kind")),
+        (Map<String, List<String>>) row.get("export_fields"));
   }
 
   @Transactional
@@ -77,18 +86,25 @@ public class AuthService {
   }
 
   Map<String, Object> issue(UUID partner, String label, String kind) {
+    return issue(partner, label, kind, Map.of());
+  }
+
+  Map<String, Object> issue(
+      UUID partner, String label, String kind, Map<String, List<String>> requested) {
+    var fields = ExportSchema.policy(requested);
     String raw = Store.token();
     UUID id = UUID.randomUUID();
     Instant expires = Instant.now().plusSeconds(kind.equals("SESSION") ? 28800 : 7776000);
     store.db.update(
-        "insert into credentials(id,partner_id,token_hash,label,kind,expires_at) values"
-            + " (?,?,?,?,?,?)",
+        "insert into credentials(id,partner_id,token_hash,label,kind,expires_at,export_fields)"
+            + " values (?,?,?,?,?,?,?::jsonb)",
         id,
         partner,
         Store.hash(raw),
         label,
         kind,
-        java.sql.Timestamp.from(expires));
+        java.sql.Timestamp.from(expires),
+        store.json(fields));
     return Map.of("id", id, "token", raw, "expires_at", expires.toString());
   }
 }

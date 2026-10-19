@@ -38,7 +38,7 @@ class BoundaryTest {
     c.openaiKey = "synthetic-test-key";
     c.openaiModel = "explicit-model";
     c.syntheticOnly = false;
-    assertThrows(IllegalStateException.class, c::validate);
+    assertDoesNotThrow(c::validate); // Network calls additionally require per-upload consent.
   }
 
   @Test

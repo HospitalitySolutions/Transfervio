@@ -1,5 +1,7 @@
 # Milestone evidence
 
+Historical M0–M6 validation below describes the original implementation. It was subsequently pushed to main at the user's explicit request as `4a8e26d` (with foundation commit `1194618`). The new universal API work, current AI acceptance evidence and feature-branch status are recorded in [universal migration review](universal-migration-review.md). Historical statements about untested AI or an unpushed branch do not describe the current revision.
+
 ## M0 — validated 18 October 2026
 
 - Folder contained only the supplied plan; GitHub repository had no refs. Initialized `feature/local-first-mvp` without overwriting the plan.

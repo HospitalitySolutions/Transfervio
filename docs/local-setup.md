@@ -48,3 +48,17 @@ The bundle uses the same JAR/domain logic with local-container hostnames and a b
 After the acceptance suite, verify persistence with `node scripts/test-persistence.mjs --capture`, stop/start the host stack, then `node scripts/test-persistence.mjs`. It compares approved exports, receipts and an original file's SHA-256 without printing invitation capabilities or record contents.
 
 The full test script requires Chrome installed for headless Playwright (or configure the browser channel in `apps/web/playwright.config.ts`). Browser tests create synthetic invitations and imports and save screenshots locally. They block external browser requests. The Java database tests use rollback-scoped synthetic rows, and their temporary MinIO object is removed after the test.
+
+## Optional authorized AI
+
+Ordinary startup forces mock mode without overwriting configured optional credentials. To use OpenAI, configure `AI_PROVIDER=openai`, `EXTERNAL_AI_ENABLED=true`, `OPENAI_MODEL` and `OPENAI_API_KEY` in ignored `.env.local`, stop the app, then explicitly start with one mode:
+
+```powershell
+.\scripts\start-local.ps1 -EnableSyntheticAi  # verified fixture checksums only
+# OR, for separately authorized previously unseen sources:
+.\scripts\start-local.ps1 -EnableExternalAi
+```
+
+Both modes require file-by-file consent in the upload portal. Structured mapping suggestions also require an explicit button action and human confirmation. An ordinary upload makes no external request. Restart without either flag to return to mock. The optional container bundle remains offline/mock and is not the live AI test runtime.
+
+The normal `run-local-tests.ps1` runs Java/local database, frontend build, isolation, migration, universal mapping/export/consumer, boundary, event, OpenAPI and browser suites. It refuses to run against an AI-enabled app. `generate-live-ai-fixture.ps1` and `test-live-ai.mjs --authorized-synthetic-test` are separate, explicitly authorized acceptance helpers; they may incur provider charges and are never called by CI or the standard suite. Live test results and usage totals stay in ignored `.local-data`.

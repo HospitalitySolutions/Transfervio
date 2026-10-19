@@ -29,23 +29,41 @@ public class DeliveryService {
     return (List<Map<String, Object>>) snapshot.get("records");
   }
 
-  Map<String, Object> export(UUID partner, UUID id, String entity, int cursor, int limit) {
+  @SuppressWarnings("unchecked")
+  Map<String, Object> export(
+      UUID partner,
+      UUID id,
+      String entity,
+      int cursor,
+      int limit,
+      String fields,
+      Map<String, List<String>> credentialFields) {
     if (cursor < 0
         || limit < 1
         || limit > 200
         || !Set.of("clients", "appointments").contains(entity))
       throw Store.error(400, "Invalid pagination or entity");
     var snapshot = snapshot(partner, id);
+    var authorized =
+        ExportSchema.allowed(
+            entity,
+            credentialFields,
+            (Map<String, List<String>>) snapshot.getOrDefault("export_fields", Map.of()));
+    var selected = ExportSchema.selection(entity, fields, authorized);
     String kind = entity.equals("clients") ? "CLIENT" : "APPOINTMENT";
     var all = records(snapshot).stream().filter(r -> kind.equals(r.get("entity"))).toList();
-    int end = Math.min(all.size(), cursor + limit);
     if (cursor > all.size()) throw Store.error(400, "Cursor outside export");
+    int end = Math.min(all.size(), cursor + limit);
     var result = new LinkedHashMap<String, Object>();
     result.put("schema_version", 1);
     result.put("migration_id", id);
     result.put("tenant_id", snapshot.get("tenant_id"));
     result.put("property_id", snapshot.get("property_id"));
-    result.put("records", all.subList(cursor, end));
+    result.put(
+        "records",
+        all.subList(cursor, end).stream()
+            .map(r -> ExportSchema.project(r, selected, fields != null))
+            .toList());
     result.put("next_cursor", end < all.size() ? end : null);
     result.put("total", all.size());
     return result;
@@ -70,8 +88,7 @@ public class DeliveryService {
     }
     var result = new LinkedHashMap<String, Object>();
     result.put("migration_id", id);
-    result.put(
-        "destination", config.destination.equals("calendra") ? "calendra-contract-stub" : "mock");
+    result.put("destination", "local-mock");
     result.put("dry_run", true);
     result.put("writes_enabled", false);
     result.put("tenant_id", snapshot.get("tenant_id"));
@@ -81,8 +98,8 @@ public class DeliveryService {
     result.put("billing_operations", 0);
     result.put(
         "note",
-        "Local contract preview only. No Calendra endpoint was contacted; actual side effects"
-            + " remain unverified.");
+        "Local mock preview only. Vendors map canonical records and perform imports in their own"
+            + " systems.");
     return result;
   }
 
@@ -92,7 +109,10 @@ public class DeliveryService {
   public void acknowledge(UUID partner, UUID migration, List<Receipt> receipts) {
     scope.migration(partner, migration, true);
     var snapshot = snapshot(partner, migration);
-    if (receipts == null || receipts.size() > 1000) throw Store.error(400, "Maximum 1000 receipts");
+    if (receipts == null || receipts.isEmpty() || receipts.size() > 1000)
+      throw Store.error(400, "Provide 1–1000 receipts");
+    if (receipts.stream().anyMatch(r -> r == null || r.record_id() == null || r.outcome() == null))
+      throw Store.error(400, "Each receipt requires a record ID and outcome");
     var byId = new HashMap<UUID, Map<String, Object>>();
     records(snapshot).forEach(r -> byId.put(Store.id(r.get("stable_record_id")), r));
     var sorted = new ArrayList<>(receipts);

@@ -17,7 +17,7 @@ public class MigrationController {
     this.migrations = migrations;
   }
 
-  record Approval(int revision) {}
+  record Approval(int revision, Map<String, List<String>> export_fields) {}
 
   @PostMapping(value = "/public/invitations/{token}/uploads", consumes = "multipart/form-data")
   List<Map<String, Object>> upload(
@@ -58,12 +58,21 @@ public class MigrationController {
 
   @PostMapping("/public/invitations/{token}/approve")
   Map<String, Object> approve(@PathVariable String token, @RequestBody Approval request) {
-    return migrations.approve(token, request.revision());
+    return migrations.approve(token, request.revision(), request.export_fields());
   }
 
   @GetMapping("/v1/migrations/{id}")
   Map<String, Object> detail(
       @AuthenticationPrincipal AuthService.Identity who, @PathVariable UUID id) {
-    return migrations.preview(scope.migration(who.partnerId(), id, false));
+    var preview = migrations.preview(scope.migration(who.partnerId(), id, false));
+    if (who.kind().equals("API_KEY"))
+      return Map.of(
+          "migration",
+          preview.get("migration"),
+          "jobs",
+          preview.get("jobs"),
+          "delivery_results",
+          preview.get("delivery_results"));
+    return preview;
   }
 }

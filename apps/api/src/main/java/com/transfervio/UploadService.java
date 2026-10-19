@@ -85,8 +85,9 @@ public class UploadService {
 
   List<Map<String, Object>> list(UUID migration) {
     return store.rows(
-        "select id,original_name,content_type,size_bytes,sha256,created_at,deleted_at from uploads"
-            + " where migration_id=? order by created_at,id",
+        "select id,original_name,content_type,size_bytes,sha256,created_at,deleted_at,exists(select"
+            + " 1 from ai_authorizations a where a.upload_id=uploads.id) as ai_authorized from"
+            + " uploads where migration_id=? order by created_at,id",
         migration);
   }
 

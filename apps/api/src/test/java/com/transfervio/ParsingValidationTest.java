@@ -23,7 +23,9 @@ class ParsingValidationTest {
             java.nio.file.Files.readAllBytes(root.resolve("clients-en.xlsx")),
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     assertEquals(5, xlsx.size());
-    assertEquals(csv, xlsx);
+    assertEquals(
+        csv.stream().map(StructuredParser.Parsed::data).toList(),
+        xlsx.stream().map(StructuredParser.Parsed::data).toList());
   }
 
   @Test

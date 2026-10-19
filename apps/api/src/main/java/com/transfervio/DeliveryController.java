@@ -23,13 +23,15 @@ public class DeliveryController {
       @PathVariable UUID id,
       @RequestParam(defaultValue = "clients") String entity,
       @RequestParam(defaultValue = "0") int cursor,
-      @RequestParam(defaultValue = "100") int limit) {
-    return delivery.export(who.partnerId(), id, entity, cursor, limit);
+      @RequestParam(defaultValue = "100") int limit,
+      @RequestParam(required = false) String fields) {
+    return delivery.export(who.partnerId(), id, entity, cursor, limit, fields, who.exportFields());
   }
 
   @GetMapping("/dry-run")
   Map<String, Object> dryRun(
       @AuthenticationPrincipal AuthService.Identity who, @PathVariable UUID id) {
+    who.admin();
     return delivery.dryRun(who.partnerId(), id);
   }
 
@@ -46,6 +48,7 @@ public class DeliveryController {
       @AuthenticationPrincipal AuthService.Identity who,
       @PathVariable UUID id,
       @RequestBody(required = false) MockRequest request) {
+    who.admin();
     return delivery.deliverMock(
         who.partnerId(),
         id,

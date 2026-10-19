@@ -12,7 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class StructuredParser {
   public record Parsed(
-      String entity, Map<String, Object> data, int row, List<String> parserIssues) {}
+      String entity,
+      Map<String, Object> data,
+      int row,
+      List<String> parserIssues,
+      Map<String, Object> sourceFields,
+      String table) {
+    public Parsed(String entity, Map<String, Object> data, int row, List<String> parserIssues) {
+      this(entity, data, row, parserIssues, Map.of(), "image");
+    }
+  }
 
   final Store store;
 
@@ -43,12 +52,20 @@ public class StructuredParser {
         "client name",
         "ime in priimek",
         "naziv");
-    alias("email", "email address", "e-mail", "e posta", "eposta");
+    alias("email", "email address", "e-mail", "e posta", "eposta", "elektronski naslov");
     alias("phone", "phone number", "mobile", "telephone", "telefon", "gsm");
     alias("notes", "note", "opombe");
     alias("language", "preferred language", "jezik");
     alias("client_source_id", "client_id", "customer_id", "stranka id", "client ref");
-    alias("start", "start time", "starts_at", "start_at", "appointment date", "datum", "zacetek");
+    alias(
+        "start",
+        "start time",
+        "starts_at",
+        "start_at",
+        "appointment date",
+        "datum",
+        "zacetek",
+        "termin");
     alias("end", "end time", "ends_at", "konec");
     alias("duration_minutes", "duration", "minutes", "trajanje");
     alias("timezone", "time zone", "casovni pas");
@@ -221,7 +238,7 @@ public class StructuredParser {
             map.put(formatter.formatCellValue(header.getCell(c)), value);
           }
           if (map.values().stream().anyMatch(v -> !Store.text(v).isBlank()))
-            add(result, map, n + 1, null, issues);
+            add(result, map, n + 1, null, issues, "sheet-" + (book.getSheetIndex(sheet) + 1));
         }
       }
     }
@@ -239,12 +256,18 @@ public class StructuredParser {
         add(result, (Map<String, Object>) item, ++row, null, List.of());
       }
     } else if (root instanceof Map<?, ?> map) {
-      for (var entry : Map.of("clients", "CLIENT", "appointments", "APPOINTMENT").entrySet()) {
-        if (map.get(entry.getKey()) instanceof List<?> list) {
+      for (var entry : map.entrySet()) {
+        if (entry.getValue() instanceof List<?> list) {
           int row = 0;
           for (var item : list) {
             if (!(item instanceof Map<?, ?>)) throw Store.error(400, "Expected records");
-            add(result, (Map<String, Object>) item, ++row, entry.getValue(), List.of());
+            add(
+                result,
+                (Map<String, Object>) item,
+                ++row,
+                Map.of("clients", "CLIENT", "appointments", "APPOINTMENT").get(entry.getKey()),
+                List.of(),
+                Store.text(entry.getKey()));
           }
         }
       }
@@ -255,10 +278,30 @@ public class StructuredParser {
   }
 
   void add(List<Parsed> out, Map<String, ?> raw, int row, String type, List<String> issues) {
+    add(out, raw, row, type, issues, "records");
+  }
+
+  void add(
+      List<Parsed> out,
+      Map<String, ?> source,
+      int row,
+      String type,
+      List<String> issues,
+      String table) {
+    var raw = new LinkedHashMap<String, Object>();
+    flatten(source, "", raw, 0);
     if (out.size() >= MAX_ROWS) throw Store.error(400, "Maximum 10,000 rows per file");
     if (raw.size() > 100 || raw.values().stream().anyMatch(v -> Store.text(v).length() > 10000))
       throw Store.error(400, "Too many columns or oversized cell");
-    var data = canonical(raw);
+    // Preserve every original column for human mapping. This preview only infers the entity;
+    // duplicate aliases require confirmation in SourceMappings before any rows are extracted.
+    var preview = new LinkedHashMap<String, Object>();
+    raw.forEach(
+        (key, value) -> {
+          String target = ALIASES.get(norm(key));
+          if (target != null) preview.putIfAbsent(target, value);
+        });
+    var data = canonical(preview);
     if (type == null)
       type =
           data.containsKey("start")
@@ -269,6 +312,19 @@ public class StructuredParser {
     if (type.equals("CLIENT")
         && data.containsKey("client_source_id")
         && !data.containsKey("source_id")) data.put("source_id", data.remove("client_source_id"));
-    out.add(new Parsed(type, data, row, new ArrayList<>(issues)));
+    out.add(new Parsed(type, data, row, new ArrayList<>(issues), new LinkedHashMap<>(raw), table));
+  }
+
+  void flatten(Map<String, ?> source, String prefix, Map<String, Object> out, int depth) {
+    if (depth > 4) throw Store.error(400, "Nested JSON exceeds four levels");
+    source.forEach(
+        (key, value) -> {
+          String name = prefix + key;
+          if (name.length() > 200)
+            throw Store.error(400, "Source column name exceeds 200 characters");
+          if (value instanceof Map<?, ?> nested)
+            flatten((Map<String, ?>) nested, name + ".", out, depth + 1);
+          else out.put(name, value instanceof List<?> ? store.json(value) : value);
+        });
   }
 }

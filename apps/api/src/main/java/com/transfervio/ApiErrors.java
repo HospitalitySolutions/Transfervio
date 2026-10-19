@@ -7,6 +7,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ApiErrors {
+  @ExceptionHandler(AiFailure.class)
+  ResponseEntity<?> ai(AiFailure e) {
+    return ResponseEntity.status(e.getStatusCode())
+        .body(Map.of("code", e.code, "message", e.getReason(), "retryable", e.retryable));
+  }
+
   @ExceptionHandler(ResponseStatusException.class)
   ResponseEntity<?> status(ResponseStatusException e) {
     return ResponseEntity.status(e.getStatusCode())

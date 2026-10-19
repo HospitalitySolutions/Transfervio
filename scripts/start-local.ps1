@@ -1,13 +1,14 @@
-param([ValidateSet('mock','calendra')][string]$Destination = 'mock', [switch]$DryRun, [switch]$SkipBuild, [switch]$EnableSyntheticAi)
+param([ValidateSet('mock')][string]$Destination = 'mock', [switch]$DryRun, [switch]$SkipBuild, [switch]$EnableSyntheticAi, [switch]$EnableExternalAi)
 . "$PSScriptRoot\common.ps1"
 Import-LocalEnvironment
 $env:DESTINATION_MODE = $Destination
 $env:IMPORT_WRITE_ENABLED = 'false'
-if ($EnableSyntheticAi) {
-    if ($env:AI_PROVIDER -ne 'openai' -or $env:EXTERNAL_AI_ENABLED -ne 'true' -or !$env:OPENAI_API_KEY -or !$env:OPENAI_MODEL) { throw 'Synthetic AI requires AI_PROVIDER=openai, EXTERNAL_AI_ENABLED=true, OPENAI_MODEL and local OPENAI_API_KEY.' }
-    $env:AI_SYNTHETIC_ONLY='true'
-    Write-Host 'EXTERNAL PROCESSING: recognized synthetic fixture images will be sent to OpenAI. Charges may apply.'
-} elseif ($env:AI_PROVIDER -ne 'mock' -or $env:EXTERNAL_AI_ENABLED -ne 'false') { throw 'External AI requires -EnableSyntheticAi and explicit local configuration.' }
+if ($EnableSyntheticAi -and $EnableExternalAi) { throw 'Choose one AI mode.' }
+if ($EnableSyntheticAi -or $EnableExternalAi) {
+    if ($env:AI_PROVIDER -ne 'openai' -or $env:EXTERNAL_AI_ENABLED -ne 'true' -or !$env:OPENAI_API_KEY -or !$env:OPENAI_MODEL) { throw 'External AI requires AI_PROVIDER=openai, EXTERNAL_AI_ENABLED=true, OPENAI_MODEL and local OPENAI_API_KEY.' }
+    $env:AI_SYNTHETIC_ONLY=if($EnableSyntheticAi){'true'}else{'false'}
+    Write-Host 'EXTERNAL PROCESSING: individually authorized files or bounded samples may be sent to OpenAI. Charges may apply.'
+} else { $env:AI_PROVIDER='mock'; $env:EXTERNAL_AI_ENABLED='false'; $env:AI_SYNTHETIC_ONLY='true' }
 $pidFile = Join-Path $LocalData 'processes.json'
 if (Test-Path $pidFile) { throw 'A stack may already be running. Run stop-local.ps1 before restarting.' }
 foreach ($port in @([int]$env:API_PORT,[int]$env:WEB_PORT)) {

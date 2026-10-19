@@ -50,4 +50,6 @@ for($i=1;$i -le 20;$i++) {
 $manifest | ConvertTo-Json -Depth 30 | Set-Content (Join-Path $dir 'ground-truth.json') -Encoding utf8
 Copy-Item (Join-Path $dir 'ground-truth.json') (Join-Path $root 'apps\api\src\main\resources\synthetic-images.json') -Force
 & "$PSScriptRoot\generate-xlsx-fixture.ps1"
+$hashes=@(Get-ChildItem $dir -File | Where-Object {$_.Extension -in '.png','.jpg','.csv','.xlsx' -or $_.Name -eq 'complete-migration.json'} | ForEach-Object {(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower()})
+$hashes | ConvertTo-Json | Set-Content (Join-Path $root 'apps\api\src\main\resources\synthetic-inputs.json') -Encoding utf8
 Write-Host 'Generated 20 labeled synthetic images, CSV, XLSX and JSON fixtures.'

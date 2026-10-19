@@ -72,6 +72,44 @@ class LocalDatabaseTest {
   }
 
   @Test
+  void aiConsentIsBoundToAnActiveInvitationUploadAndChecksum() {
+    var config = new RuntimeConfigTest().local();
+    config.externalAi = true;
+    config.aiProvider = "openai";
+    config.syntheticOnly = false;
+    var consent = new AiConsent(store, scopes, config);
+    UUID upload = UUID.randomUUID();
+    String sha = Store.hash("unseen synthetic source");
+    store.db.update(
+        "insert into"
+            + " uploads(id,migration_id,original_name,content_type,size_bytes,sha256,object_key)"
+            + " values (?,?,'synthetic.csv','text/csv',23,?,?)",
+        upload,
+        migration,
+        sha,
+        "synthetic/" + upload);
+    assertThrows(Exception.class, () -> consent.require(migration, upload, sha));
+    consent.set(token, upload, true, true);
+    assertDoesNotThrow(() -> consent.require(migration, upload, sha));
+    assertThrows(Exception.class, () -> consent.require(UUID.randomUUID(), upload, sha));
+    assertThrows(Exception.class, () -> consent.require(migration, UUID.randomUUID(), sha));
+    assertThrows(Exception.class, () -> consent.require(migration, upload, Store.hash("changed")));
+    consent.set(token, upload, false, true);
+    assertThrows(Exception.class, () -> consent.require(migration, upload, sha));
+    config.syntheticOnly = true;
+    assertThrows(Exception.class, () -> consent.set(token, upload, true, true));
+    config.syntheticOnly = false;
+    consent.set(token, upload, true, true);
+    store.db.update("update invitations set revoked=true where migration_id=?", migration);
+    assertThrows(Exception.class, () -> consent.require(migration, upload, sha));
+    store.db.update(
+        "update invitations set revoked=false,expires_at=now()-interval '1 second' where"
+            + " migration_id=?",
+        migration);
+    assertThrows(Exception.class, () -> consent.require(migration, upload, sha));
+  }
+
+  @Test
   void databaseRejectsCrossPartnerProperty() {
     UUID other = UUID.randomUUID();
     store.db.update(

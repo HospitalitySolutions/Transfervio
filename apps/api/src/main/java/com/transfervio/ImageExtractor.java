@@ -30,8 +30,12 @@ public class ImageExtractor {
 
   @SuppressWarnings("unchecked")
   List<StructuredParser.Parsed> extract(byte[] bytes, UUID migration) {
+    return extract(bytes, migration, null);
+  }
+
+  List<StructuredParser.Parsed> extract(byte[] bytes, UUID migration, UUID upload) {
     if (config != null && config.aiProvider.equals("openai"))
-      return vision.extract(bytes, migration);
+      return vision.extract(bytes, migration, upload);
     try {
       var resource = new ClassPathResource("synthetic-images.json");
       if (resource.exists()) {

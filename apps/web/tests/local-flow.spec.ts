@@ -57,7 +57,16 @@ test("partner invitation, branded review, correction, approval and local deliver
   await expect(
     portal.getByRole("heading", { name: "Your next chapter starts here." }),
   ).toBeVisible();
-  await expect(portal.locator(".wordmark")).toContainText("Calendra");
+  const landing = await (
+    await portal.request.get(
+      new URL(url).origin +
+        "/public/invitations/" +
+        new URL(url).pathname.split("/").at(-1),
+    )
+  ).json();
+  await expect(portal.locator(".wordmark")).toContainText(
+    landing.brand.brand_name,
+  );
   await portal
     .getByLabel("Upload files")
     .setInputFiles(
