@@ -1,0 +1,24 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const root=new URL('../',import.meta.url),env=Object.fromEntries(readFileSync(new URL('.env.local',root),'utf8').split(/\r?\n/).filter(l=>/^[A-Z_]+=/.test(l)).map(l=>[l.slice(0,l.indexOf('=')),l.slice(l.indexOf('=')+1)]));
+const base=`http://localhost:${env.API_PORT||8091}`;let key,checks=0;
+async function api(path,method='GET',body,status=200){const r=await fetch(base+path,{method,headers:{...(key?{Authorization:`Bearer ${key}`} : {}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const text=await r.text();assert.equal(r.status,status,text.slice(0,200));checks++;return text?JSON.parse(text):undefined;}
+async function upload(raw,files,status=200){const form=new FormData();for(const [name,data]of files)form.append('files',new Blob([data]),name);const r=await fetch(base+`/public/invitations/${raw}/uploads`,{method:'POST',body:form});const text=await r.text();assert.equal(r.status,status,text.slice(0,100));checks++;return text?JSON.parse(text):undefined;}
+key=(await api('/auth/login','POST',{email:'admin@calendra.test',password:env.BOOTSTRAP_ADMIN_PASSWORD})).token;
+const tenant=await api('/v1/tenants','POST',{external_tenant_id:'boundary-tests',name:'Synthetic Boundary Tests'});
+const property=await api(`/v1/tenants/${tenant.id}/properties`,'POST',{external_property_id:'p1',name:'Boundary Property 1',timezone:'Europe/Ljubljana'});
+const second=await api(`/v1/tenants/${tenant.id}/properties`,'POST',{external_property_id:'p2',name:'Boundary Property 2',timezone:'Europe/Ljubljana'});
+async function invite(){const i=await api('/v1/invitations','POST',{tenant_id:tenant.id,property_id:property.id,allowed_entities:['CLIENT'],expires_in_hours:24});return {...i,raw:new URL(i.upload_url).pathname.split('/').at(-1)};}
+const i=await invite(),j=await invite();const path=`/public/invitations/${i.raw}`;
+const landing=await api(path+`?property_id=${second.id}`);assert.equal(landing.migration.property_id,property.id);
+await upload(i.raw,[['empty.csv','']],400);await upload(i.raw,[['unsafe.csv','<html>not data</html>']],400);await upload(i.raw,[['bad.xlsx','P']],415);await upload(i.raw,[['large.csv',new Uint8Array(10*1024*1024+1)]],413);
+await upload(i.raw,Array.from({length:21},(_,n)=>[`row-${n}.csv`,`id,name\nc${n},Synthetic ${n}`]),400);
+const files=Array.from({length:20},(_,n)=>[`row-${n}.csv`,`id,name\nc${n},Synthetic ${n}`]);const added=await upload(i.raw,files);assert.equal(added.length,20);assert.equal((await upload(i.raw,[files[0]]))[0].duplicate,true);await upload(i.raw,[['extra.csv','id,name\nextra,Synthetic Extra']],400);
+const original=await fetch(base+path+`/uploads/${added[0].id}`);assert.equal(original.status,200);assert.equal(await original.text(),files[0][1]);
+await api(`/public/invitations/${j.raw}/uploads/${added[0].id}`,'GET',undefined,404);
+const crossOrigin=await fetch(base+'/auth/login',{method:'POST',headers:{Origin:'https://untrusted.example','Content-Type':'application/json'},body:'{}'});assert.equal(crossOrigin.status,403);
+const restricted={clients:[{id:'allowed-client',name:'Synthetic Allowed'}],appointments:[{id:'disallowed-appointment',client_id:'allowed-client',start:'2026-11-02T10:00',duration:'60',status:'BOOKED'}]};await upload(j.raw,[['restricted.json',JSON.stringify(restricted)]]);await api(`/public/invitations/${j.raw}/process`,'POST');let preview;
+for(let n=0;n<30;n++){await new Promise(r=>setTimeout(r,500));preview=await api(`/public/invitations/${j.raw}/preview`);if(preview.migration.status==='REVIEW')break}assert.equal(preview.migration.status,'REVIEW');const appt=preview.records.find(r=>r.entity==='APPOINTMENT');assert.ok(appt.issues.some(x=>x.code==='ENTITY_NOT_ALLOWED'));
+await api(`/public/invitations/${j.raw}/mappings`,'PATCH',{revision:preview.migration.revision,records:[{record_id:appt.id,fields:{},acknowledge_source:true}]});preview=await api(`/public/invitations/${j.raw}/preview`);assert.ok(preview.records.find(r=>r.id===appt.id).issues.some(x=>x.code==='ENTITY_NOT_ALLOWED'));await api(`/public/invitations/${j.raw}/approve`,'POST',{revision:preview.migration.revision},409);
+await api(`/v1/migrations/${i.migration_id}`,'DELETE');await api(`/v1/migrations/${j.migration_id}`,'DELETE');await api(path,'GET',undefined,404);await api(`/v1/migrations/${i.migration_id}`,'GET',undefined,404);
+await api('/v1/logout','POST');const report={passed:true,httpAssertions:checks,uniqueFileQuota:20,oversizedFileRejected:true,duplicateAtQuotaIdempotent:true,scopedOriginalDownload:true,sameTenantPropertySubstitutionBlocked:true,entityRestrictionSurvivesAcknowledgment:true,deleteCascade:true};writeFileSync(new URL('.local-data/boundary-results.json',root),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

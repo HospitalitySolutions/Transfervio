@@ -1,0 +1,794 @@
+{
+  "9b4fa61b62ee91a423d7ae20ce86be74930d6fb33f3c504ffb927881cd659564": {
+    "layout": 5,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-05.png"
+  },
+  "b6e78c363c73ec7409b00acd93d3818afcc511377608935dc84cb3669228cd70": {
+    "layout": 9,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-09.png"
+  },
+  "7274e66061dd502e5233bba9721c4e800051aa955a267bea948d29411938eb03": {
+    "layout": 19,
+    "records": {
+      "appointments": [
+        {
+          "start": "03/04/2026 10:00",
+          "source_service": "Consultation",
+          "source_id": "incomplete-19",
+          "source_employee": "Demo Specialist",
+          "client_source_id": "demo-c1",
+          "status": "CONFIRMED"
+        }
+      ]
+    },
+    "file": "screenshot-19.png"
+  },
+  "e8048c3cfce633eadbc84c8375848a5c974916830ca2270dde1b230b9c7eff0a": {
+    "layout": 6,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-06.png"
+  },
+  "b2e2ad85a91b3888ea2af8b1f346cf72b7c540f895ff03b01e79e7284974f392": {
+    "layout": 14,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-14.png"
+  },
+  "0e799920e91655c9e5274e01ca6f5d5ecd90bd1cdf24e98d9545c2554400198a": {
+    "layout": 2,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-02.png"
+  },
+  "564728f0ad3ecb21a523ea9bebe9d29737f9745492d5f5fe7dbdbfc24983b3bb": {
+    "layout": 7,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-07.png"
+  },
+  "9397ab408c851671e727bd2bb2898fc18c05eadf9961566baf39b4d53dfc1665": {
+    "layout": 20,
+    "records": {
+      "appointments": [
+        {
+          "start": "03/04/2026 10:00",
+          "source_service": "Consultation",
+          "source_id": "incomplete-20",
+          "source_employee": "Demo Specialist",
+          "client_source_id": "demo-c1",
+          "status": "CONFIRMED"
+        }
+      ]
+    },
+    "file": "screenshot-20.png"
+  },
+  "50009ea5a31072163feb79a7f76dddb94f23b86192eb2de82d775ee5b3344604": {
+    "layout": 10,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-10.png"
+  },
+  "218553613eca8b36a12948e6b9d872117f0f2aa86384afb9418b86978a4f13eb": {
+    "layout": 3,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-03.png"
+  },
+  "df57d821a0c38252ebd3acf6a20dcab100dd3d8bd48e09eb97251eb9f1cdbddd": {
+    "layout": 4,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-04.png"
+  },
+  "951a587213d9742f2f9ea906c6990463a35e96ad715f38ed9f0f50c7ee6910b2": {
+    "layout": 8,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-08.png"
+  },
+  "c30d81e7abff58cecdcd1938cb5448f6c24d1d1859891bf4eae699d316fb799c": {
+    "layout": 11,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-11.png"
+  },
+  "d351a973ed2aac8e1bb0567e46844e04bd31b99588f872251658c82d3dc4158b": {
+    "layout": 16,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-16.png"
+  },
+  "c27d9a89d065e58f28df49b25ce01d1c13fb22aadbac0036c63d62e16c5d5815": {
+    "layout": 13,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-13.png"
+  },
+  "3fc965d392ef9334232529e1ecdc6faa1e5c1e2f99b30e683248d1c2f6a98c46": {
+    "layout": 15,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-15.png"
+  },
+  "fff71dd6ce148d4ee5ecca6b1b84a57b32e3a7ef6b5057e2252468d24c73330c": {
+    "layout": 12,
+    "records": {
+      "appointments": [
+        {
+          "start": "2026-11-02T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c1",
+          "source_id": "demo-a1",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-03T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c2",
+          "source_id": "demo-a2",
+          "source_employee": "Demo Specialist"
+        },
+        {
+          "start": "2026-11-04T10:00",
+          "status": "CONFIRMED",
+          "duration_minutes": "60",
+          "source_service": "Consultation",
+          "timezone": "Europe/Ljubljana",
+          "client_source_id": "demo-c3",
+          "source_id": "demo-a3",
+          "source_employee": "Demo Specialist"
+        }
+      ]
+    },
+    "file": "screenshot-12.png"
+  },
+  "23561f1e519edfed379c2370e9213c1167ee6f4d9af312e6bc3ffcdc7d59f971": {
+    "layout": 1,
+    "records": {
+      "clients": [
+        {
+          "phone": "+38640000001",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c1",
+          "display_name": "Demo1 Example",
+          "email": "demo1@example.test",
+          "first_name": "Demo1"
+        },
+        {
+          "phone": "+38640000002",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c2",
+          "display_name": "Demo2 Example",
+          "email": "demo2@example.test",
+          "first_name": "Demo2"
+        },
+        {
+          "phone": "+38640000003",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c3",
+          "display_name": "Demo3 Example",
+          "email": "demo3@example.test",
+          "first_name": "Demo3"
+        },
+        {
+          "phone": "+38640000004",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c4",
+          "display_name": "Demo4 Example",
+          "email": "demo4@example.test",
+          "first_name": "Demo4"
+        },
+        {
+          "phone": "+38640000005",
+          "last_name": "Example",
+          "language": "sl",
+          "source_id": "demo-c5",
+          "display_name": "Demo5 Example",
+          "email": "demo5@example.test",
+          "first_name": "Demo5"
+        }
+      ]
+    },
+    "file": "screenshot-01.png"
+  },
+  "3859cf687490a63f01863a05faa573715564a2c5c7fa7421b375b68c83154a87": {
+    "layout": 17,
+    "records": {
+      "appointments": [
+        {
+          "start": "03/04/2026 10:00",
+          "source_service": "Consultation",
+          "source_id": "incomplete-17",
+          "source_employee": "Demo Specialist",
+          "client_source_id": "demo-c1",
+          "status": "CONFIRMED"
+        }
+      ]
+    },
+    "file": "screenshot-17.png"
+  },
+  "537b031e9059fea9323a5e00d397635af8c3f83653817372e00e7c9d08ae36ae": {
+    "layout": 18,
+    "records": {
+      "appointments": [
+        {
+          "start": "03/04/2026 10:00",
+          "source_service": "Consultation",
+          "source_id": "incomplete-18",
+          "source_employee": "Demo Specialist",
+          "client_source_id": "demo-c1",
+          "status": "CONFIRMED"
+        }
+      ]
+    },
+    "file": "screenshot-18.png"
+  }
+}

@@ -12,7 +12,8 @@ function Import-LocalEnvironment {
     $path = Join-Path $ProjectRoot '.env.local'
     if (!(Test-Path -LiteralPath $path)) { Copy-Item -LiteralPath (Join-Path $ProjectRoot '.env.local.example') -Destination $path }
     $lines = @(Get-Content -LiteralPath $path)
-    $secretNames = @('DB_PASSWORD','MINIO_ROOT_PASSWORD','BOOTSTRAP_ADMIN_PASSWORD')
+    $secretNames = @('DB_PASSWORD','MINIO_ROOT_PASSWORD','BOOTSTRAP_ADMIN_PASSWORD','WEBHOOK_SIGNING_MASTER')
+    foreach ($secretName in $secretNames) { if (!($lines | Where-Object { $_ -match "^$secretName=" })) { $lines += "$secretName=" } }
     for ($i = 0; $i -lt $lines.Length; $i++) {
         if ($lines[$i] -match '^([A-Z][A-Z0-9_]*)=(.*)$') {
             $name = $Matches[1]; $value = $Matches[2]

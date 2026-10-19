@@ -1,0 +1,921 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8091
+  description: Generated server url
+paths:
+  /v1/tenants/{id}/catalog:
+    get:
+      tags:
+      - partner-controller
+      operationId: catalog
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    put:
+      tags:
+      - partner-controller
+      operationId: catalog_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Catalog"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /v1/branding:
+    put:
+      tags:
+      - partner-controller
+      operationId: brand
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Branding"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /v1/webhook-subscriptions:
+    get:
+      tags:
+      - event-controller
+      operationId: subscriptions
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    post:
+      tags:
+      - event-controller
+      operationId: subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Subscription"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/tenants:
+    get:
+      tags:
+      - partner-controller
+      operationId: tenants
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    post:
+      tags:
+      - partner-controller
+      operationId: tenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tenant"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/tenants/{id}/properties:
+    get:
+      tags:
+      - partner-controller
+      operationId: properties
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    post:
+      tags:
+      - partner-controller
+      operationId: property
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Property"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/migrations/{id}/mock-delivery:
+    post:
+      tags:
+      - delivery-controller
+      operationId: mock
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MockRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/migrations/{id}/delivery-results:
+    post:
+      tags:
+      - delivery-controller
+      operationId: receipts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Receipts"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /v1/logout:
+    post:
+      tags:
+      - partner-controller
+      operationId: logout
+      responses:
+        "200":
+          description: OK
+  /v1/invitations:
+    get:
+      tags:
+      - partner-controller
+      operationId: invites
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    post:
+      tags:
+      - partner-controller
+      operationId: invite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Invitation"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/invitations/{id}/revoke:
+    post:
+      tags:
+      - partner-controller
+      operationId: revoke
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+  /v1/api-keys:
+    get:
+      tags:
+      - partner-controller
+      operationId: keys
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+    post:
+      tags:
+      - partner-controller
+      operationId: key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Key"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/api-keys/{id}/revoke:
+    post:
+      tags:
+      - partner-controller
+      operationId: revokeKey
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+  /public/invitations/{token}/uploads:
+    post:
+      tags:
+      - migration-controller
+      operationId: upload
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+              - files
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+  /public/invitations/{token}/process:
+    post:
+      tags:
+      - migration-controller
+      operationId: process
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /public/invitations/{token}/approve:
+    post:
+      tags:
+      - migration-controller
+      operationId: approve
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Approval"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /auth/login:
+    post:
+      tags:
+      - partner-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /public/invitations/{token}/mappings:
+    patch:
+      tags:
+      - migration-controller
+      operationId: mappings
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Corrections"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /v1/webhook-deliveries:
+    get:
+      tags:
+      - event-controller
+      operationId: deliveries
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+  /v1/migrations:
+    get:
+      tags:
+      - partner-controller
+      operationId: migrations
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+  /v1/migrations/{id}:
+    get:
+      tags:
+      - migration-controller
+      operationId: detail
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+    delete:
+      tags:
+      - retention-controller
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+  /v1/migrations/{id}/export:
+    get:
+      tags:
+      - delivery-controller
+      operationId: export
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: entity
+        in: query
+        required: false
+        schema:
+          type: string
+          default: clients
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/migrations/{id}/dry-run:
+    get:
+      tags:
+      - delivery-controller
+      operationId: dryRun
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/me:
+    get:
+      tags:
+      - partner-controller
+      operationId: me
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/events:
+    get:
+      tags:
+      - event-controller
+      operationId: events
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+  /public/invitations/{token}:
+    get:
+      tags:
+      - partner-controller
+      operationId: landing
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /public/invitations/{token}/uploads/{id}:
+    get:
+      tags:
+      - migration-controller
+      operationId: original
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: byte
+  /public/invitations/{token}/preview:
+    get:
+      tags:
+      - migration-controller
+      operationId: preview
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /api/runtime:
+    get:
+      tags:
+      - runtime-controller
+      operationId: runtime
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /v1/webhook-subscriptions/{id}:
+    delete:
+      tags:
+      - event-controller
+      operationId: remove
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+  /v1/tenants/{id}:
+    delete:
+      tags:
+      - partner-controller
+      operationId: deleteTenant
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+  /v1/tenants/{id}/properties/{propertyId}:
+    delete:
+      tags:
+      - partner-controller
+      operationId: deleteProperty
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: propertyId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    Catalog:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogItem"
+          maxItems: 1000
+          minItems: 0
+      required:
+      - entries
+      - property_id
+    CatalogItem:
+      type: object
+      properties:
+        kind:
+          type: string
+          pattern: SERVICE|EMPLOYEE
+        external_id:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 160
+          minLength: 0
+      required:
+      - external_id
+      - name
+    Branding:
+      type: object
+      properties:
+        brand_name:
+          type: string
+          maxLength: 160
+          minLength: 0
+        primary_color:
+          type: string
+          pattern: "#[0-9a-fA-F]{6}"
+        support_text:
+          type: string
+          maxLength: 500
+          minLength: 0
+        logo_data:
+          type: string
+          maxLength: 180000
+          minLength: 0
+      required:
+      - brand_name
+      - support_text
+    Subscription:
+      type: object
+      properties:
+        target_url:
+          type: string
+    Tenant:
+      type: object
+      properties:
+        external_tenant_id:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 160
+          minLength: 0
+      required:
+      - external_tenant_id
+      - name
+    Property:
+      type: object
+      properties:
+        external_property_id:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 160
+          minLength: 0
+        timezone:
+          type: string
+          minLength: 1
+      required:
+      - external_property_id
+      - name
+      - timezone
+    MockRequest:
+      type: object
+      properties:
+        fail_record_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+    Receipt:
+      type: object
+      properties:
+        record_id:
+          type: string
+          format: uuid
+        outcome:
+          type: string
+        destination_id:
+          type: string
+        error_code:
+          type: string
+    Receipts:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Receipt"
+    Invitation:
+      type: object
+      properties:
+        tenant_id:
+          type: string
+          format: uuid
+        property_id:
+          type: string
+          format: uuid
+        allowed_entities:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        expires_in_hours:
+          type: integer
+          format: int32
+          maximum: 720
+          minimum: 1
+      required:
+      - allowed_entities
+      - tenant_id
+    Key:
+      type: object
+      properties:
+        label:
+          type: string
+          maxLength: 100
+          minLength: 0
+      required:
+      - label
+    Approval:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int32
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        password:
+          type: string
+          maxLength: 200
+          minLength: 0
+      required:
+      - email
+      - password
+    Correction:
+      type: object
+      properties:
+        record_id:
+          type: string
+          format: uuid
+        fields:
+          type: object
+          additionalProperties:
+            type: string
+        excluded:
+          type: boolean
+        acknowledge_source:
+          type: boolean
+    Corrections:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int32
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/Correction"

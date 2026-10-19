@@ -20,7 +20,7 @@ jobs:
         run: |
           ./scripts/check-source.ps1
           $env:JAVA_HOME = 'C:\Program Files\Java\jdk-21.0.10'
-          mvn.cmd -B -f apps/api/pom.xml verify
+          mvn.cmd -B -s infra/maven/settings.xml -f apps/api/pom.xml verify
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Push-Location apps/web
           npm.cmd ci --no-audit --no-fund

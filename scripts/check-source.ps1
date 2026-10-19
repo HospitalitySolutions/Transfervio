@@ -2,6 +2,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $files = @(git -C $root ls-files --cached --others --exclude-standard)
 foreach ($file in $files) {
+    if (!(Test-Path -LiteralPath (Join-Path $root $file) -PathType Leaf)) { continue }
     if ($file -match '(^|/)(\.env\.local|\.local-data|\.runner|node_modules|target)(/|$)') { throw "Private/generated path exposed to Git: $file" }
     if ($file -match '\.(pem|key|dump)$') { throw "Private file exposed to Git: $file" }
     if ($file -match '\.(png|jpg|xlsx)$') { continue }

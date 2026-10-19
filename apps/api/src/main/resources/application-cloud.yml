@@ -1,4 +1,9 @@
 # Configuration only. Deliberately no defaults for required cloud values.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
 spring:
   datasource:
     url: ${DB_URL}

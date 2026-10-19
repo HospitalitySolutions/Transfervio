@@ -34,3 +34,17 @@ Stopping preserves all data. `backup-local.ps1` creates a PostgreSQL custom-form
 `reset-local.ps1` requires typing `DELETE TRANSFERVIO`. It removes only this Compose project's database volume and `.local-data/objects`; it preserves backups and credentials. It does not touch Calendra or other Docker volumes. Manual pruning of unrelated Docker data is not part of this project.
 
 MinIO community binary distribution changed; the local image builds `RELEASE.2025-10-15T17-29-55Z` from the official source using Go. See the [upstream source and AGPL license](https://github.com/minio/minio). This development dependency requires a maintenance/security review before any cloud use.
+
+## Production-like local container bundle
+
+```powershell
+docker compose --env-file .env.local -f infra/local/compose.bundle.yaml up -d --build
+# http://localhost:5175 — separate database, bucket and object folder
+docker compose --env-file .env.local -f infra/local/compose.bundle.yaml stop
+```
+
+The bundle uses the same JAR/domain logic with local-container hostnames and a built React frontend behind Nginx. API/data services join only a Docker internal network; Nginx also joins an ingress bridge so Docker Desktop can publish the loopback port. Its database volume is `transfervio-bundle_bundle-postgres`; objects are `.local-data/bundle/objects`. It exposes only the loopback web port, not the database or object store. `stop-local.ps1` controls the host-development stack only; stop the bundle with its own Compose file. Never use `down --volumes` unless deliberately deleting the bundle database. Its backup/restore procedure is the same as above, with the bundle Compose file and object path.
+
+After the acceptance suite, verify persistence with `node scripts/test-persistence.mjs --capture`, stop/start the host stack, then `node scripts/test-persistence.mjs`. It compares approved exports, receipts and an original file's SHA-256 without printing invitation capabilities or record contents.
+
+The full test script requires Chrome installed for headless Playwright (or configure the browser channel in `apps/web/playwright.config.ts`). Browser tests create synthetic invitations and imports and save screenshots locally. They block external browser requests. The Java database tests use rollback-scoped synthetic rows, and their temporary MinIO object is removed after the test.

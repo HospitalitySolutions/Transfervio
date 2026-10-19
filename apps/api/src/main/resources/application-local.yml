@@ -4,11 +4,11 @@ spring:
     username: ${DB_USER:transfervio}
     password: ${DB_PASSWORD}
 server:
-  address: 127.0.0.1
+  address: ${API_BIND_ADDRESS:127.0.0.1}
 app:
   runtime: local
   web-url: http://localhost:${WEB_PORT:5174}
-  storage-endpoint: http://localhost:${MINIO_PORT:9004}
+  storage-endpoint: ${STORAGE_ENDPOINT:http://localhost:${MINIO_PORT:9004}}
   storage-bucket: ${STORAGE_BUCKET:transfervio-local}
   storage-access-key: ${MINIO_ROOT_USER}
   storage-secret-key: ${MINIO_ROOT_PASSWORD}

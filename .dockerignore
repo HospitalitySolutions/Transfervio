@@ -1,0 +1,10 @@
+.git
+.runner
+.local-data
+.tools
+.env*
+**/node_modules
+**/target
+**/dist
+**/test-results
+**/*.log

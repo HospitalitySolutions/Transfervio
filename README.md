@@ -22,6 +22,12 @@ The startup script generates local secrets in ignored `.env.local`. The first bu
 
 Everything binds to loopback. No tunnel, AWS provisioning, deployment, production Calendra access, or paid AI calls. Cloud configuration is a scaffold, not a deployment. External AI and remote writes fail closed.
 
+Sign in as `admin@calendra.test` or `admin@lime.test` using `BOOTSTRAP_ADMIN_PASSWORD` from `.env.local`. These are synthetic local accounts. Add a customer, create its location and catalog, generate an invitation, then open the one-time upload link on this computer. Files under `fixtures/synthetic` are safe for demonstrations. Upload `clients-sl.csv` and `screenshot-09.png` for five clients and three appointments; add `screenshot-17.png` to exercise an ambiguous date and missing duration.
+
+The recipient reviews and approves; the partner opens the migration, previews delivery, then delivers to the local mock. `READY` means approved, while `IMPORTED` requires confirmed record receipts. `run-calendra-smoke.ps1 -DryRun` writes a local proposed-changes report. Real Calendra import is blocked pending the API/credential work documented in [Calendra integration](docs/calendra-integration.md).
+
+Validated features and remaining external gates are recorded in [milestone evidence](docs/milestones.md). See [security and privacy](docs/security-privacy.md) for retention, synthetic-only optional AI, and known limitations. The code-based branding is a placeholder; no original logo file was supplied.
+
 See [local setup](docs/local-setup.md), [architecture](docs/architecture.md), [runtime profiles](docs/local-vs-cloud.md), and the authoritative [implementation plan](TRANSFERVIO_MVP_LOCAL_FIRST_CODEX_PLAN.md).
 
 ## CI

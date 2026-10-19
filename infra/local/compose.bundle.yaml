@@ -1,0 +1,72 @@
+# Optional production-like local bundle. Separate project, database and object path.
+name: transfervio-bundle
+services:
+  postgres:
+    image: postgres:17.9-alpine
+    environment:
+      POSTGRES_DB: transfervio
+      POSTGRES_USER: transfervio
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Required}
+    volumes: [bundle-postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U transfervio -d transfervio"]
+      interval: 5s
+      retries: 20
+    networks: [private]
+  minio:
+    image: transfervio-minio:RELEASE.2025-10-15T17-29-55Z
+    build: ./minio
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Required}
+    volumes: [../../.local-data/bundle/objects:/data]
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:9000/minio/health/live]
+      interval: 5s
+      retries: 20
+    networks: [private]
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      LOCAL_CONTAINER: 'true'
+      API_BIND_ADDRESS: 0.0.0.0
+      API_PORT: 8091
+      WEB_PORT: 5175
+      DB_HOST: postgres
+      POSTGRES_PORT: 5432
+      DB_NAME: transfervio
+      DB_USER: transfervio
+      DB_PASSWORD: ${DB_PASSWORD:?Required}
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_BUCKET: transfervio-bundle
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Required}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:?Required}
+      WEBHOOK_SIGNING_MASTER: ${WEBHOOK_SIGNING_MASTER:?Required}
+      AI_PROVIDER: mock
+      EXTERNAL_AI_ENABLED: 'false'
+      IMPORT_WRITE_ENABLED: 'false'
+      DESTINATION_MODE: mock
+    depends_on:
+      postgres: {condition: service_healthy}
+      minio: {condition: service_healthy}
+    networks: [private]
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+    ports: ['127.0.0.1:5175:80']
+    depends_on: [api]
+    # Docker Desktop needs an ingress bridge for host port publication.
+    # Only nginx joins it; application and data services remain internal-only.
+    networks: [private, ingress]
+networks:
+  private:
+    internal: true
+  ingress: {}
+volumes:
+  bundle-postgres:

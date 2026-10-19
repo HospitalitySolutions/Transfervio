@@ -1,0 +1,81 @@
+{
+  "clients": [
+    {
+      "phone": "+38640000001",
+      "last_name": "Example",
+      "language": "sl",
+      "source_id": "demo-c1",
+      "display_name": "Demo1 Example",
+      "email": "demo1@example.test",
+      "first_name": "Demo1"
+    },
+    {
+      "phone": "+38640000002",
+      "last_name": "Example",
+      "language": "sl",
+      "source_id": "demo-c2",
+      "display_name": "Demo2 Example",
+      "email": "demo2@example.test",
+      "first_name": "Demo2"
+    },
+    {
+      "phone": "+38640000003",
+      "last_name": "Example",
+      "language": "sl",
+      "source_id": "demo-c3",
+      "display_name": "Demo3 Example",
+      "email": "demo3@example.test",
+      "first_name": "Demo3"
+    },
+    {
+      "phone": "+38640000004",
+      "last_name": "Example",
+      "language": "sl",
+      "source_id": "demo-c4",
+      "display_name": "Demo4 Example",
+      "email": "demo4@example.test",
+      "first_name": "Demo4"
+    },
+    {
+      "phone": "+38640000005",
+      "last_name": "Example",
+      "language": "sl",
+      "source_id": "demo-c5",
+      "display_name": "Demo5 Example",
+      "email": "demo5@example.test",
+      "first_name": "Demo5"
+    }
+  ],
+  "appointments": [
+    {
+      "start": "2026-11-02T10:00",
+      "status": "CONFIRMED",
+      "duration_minutes": "60",
+      "source_service": "Consultation",
+      "timezone": "Europe/Ljubljana",
+      "client_source_id": "demo-c1",
+      "source_id": "demo-a1",
+      "source_employee": "Demo Specialist"
+    },
+    {
+      "start": "2026-11-03T10:00",
+      "status": "CONFIRMED",
+      "duration_minutes": "60",
+      "source_service": "Consultation",
+      "timezone": "Europe/Ljubljana",
+      "client_source_id": "demo-c2",
+      "source_id": "demo-a2",
+      "source_employee": "Demo Specialist"
+    },
+    {
+      "start": "2026-11-04T10:00",
+      "status": "CONFIRMED",
+      "duration_minutes": "60",
+      "source_service": "Consultation",
+      "timezone": "Europe/Ljubljana",
+      "client_source_id": "demo-c3",
+      "source_id": "demo-a3",
+      "source_employee": "Demo Specialist"
+    }
+  ]
+}
